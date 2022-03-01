@@ -56,7 +56,7 @@ class Devise::TwoFactorAuthenticationController < DeviseController
     end
   end
 
-  def after_two_factor_success_path_for(_sresource)
+  def after_two_factor_success_path_for(_resource)
     stored_location_for(resource_name) || :root
   end
 
