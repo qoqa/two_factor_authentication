@@ -21,7 +21,8 @@ class Devise::TwoFactorAuthenticationController < DeviseController
       resource.send_new_otp
     end
     redirect_to send("#{resource_name}_two_factor_authentication_path"),
-                notice: I18n.t('devise.two_factor_authentication.code_has_been_sent')
+                notice: I18n.t('devise.two_factor_authentication.code_has_been_sent'),
+                allow_other_host: true
   end
 
   private
@@ -42,7 +43,7 @@ class Devise::TwoFactorAuthenticationController < DeviseController
       resource.update_attribute(:second_factor_attempts_count, 0)
     end
 
-    redirect_to after_two_factor_success_path_for(resource)
+    redirect_to after_two_factor_success_path_for(resource), allow_other_host: true
   end
 
   def remember_two_factor_cookie(resource)
@@ -80,7 +81,7 @@ class Devise::TwoFactorAuthenticationController < DeviseController
   end
 
   def prepare_and_validate
-    redirect_to :root and return if resource.nil?
+    redirect_to :root, allow_other_host: true and return if resource.nil?
 
     @limit = resource.max_login_attempts
     if resource.max_login_attempts?
