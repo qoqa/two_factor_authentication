@@ -17,7 +17,7 @@ class Devise::TwoFactorAuthenticationController < DeviseController
   end
 
   def resend_code
-    ActiveRecord::Base.connected_to(role: ActiveRecord::Base.writing_role, prevent_writes: false) do
+    ActiveRecord::Base.connected_to(role: :writing) do
       resource.send_new_otp
     end
     redirect_to send("#{resource_name}_two_factor_authentication_path"),
@@ -39,7 +39,7 @@ class Devise::TwoFactorAuthenticationController < DeviseController
       sign_in(resource_name, resource, bypass: true)
     end
     set_flash_message :notice, :success
-    ActiveRecord::Base.connected_to(role: ActiveRecord::Base.writing_role, prevent_writes: false) do
+    ActiveRecord::Base.connected_to(role: :writing) do
       resource.update_attribute(:second_factor_attempts_count, 0)
     end
 
@@ -63,7 +63,7 @@ class Devise::TwoFactorAuthenticationController < DeviseController
 
   def after_two_factor_fail_for(resource)
     resource.second_factor_attempts_count += 1
-    ActiveRecord::Base.connected_to(role: ActiveRecord::Base.writing_role, prevent_writes: false) do
+    ActiveRecord::Base.connected_to(role: :writing) do
       resource.save
     end
     set_flash_message :alert, :attempt_failed, now: true
